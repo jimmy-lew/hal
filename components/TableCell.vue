@@ -22,16 +22,14 @@ const {
     type,
     hint,
     icon
-} = toRefs(cellData.value)
+} = cellData.value
 
 const isTooltipActive = ref(false)
 const cell = ref<Nullable<HTMLElement>>(null)
 
 const formattedData = computed(() => {
-    if (typeof data.value === 'number') {
-        return data.value.toLocaleString()
-    }
-    return data.value
+    let newData = data.value ? data.value : data
+    return typeof newData === 'number' ? Math.round((newData + Number.EPSILON) * 100) / 100 : newData
 })
 
 const isHovered = useElementHover(cell)

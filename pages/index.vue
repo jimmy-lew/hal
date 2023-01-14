@@ -1,7 +1,15 @@
 <template>
     <GlowWrapper class="h-screen w-screen flex items-center justify-center bg-[#0c0c0c] text-white">
         <Table :table-data="tableData" :header-data="headerData"/>
-        <ThePowerModal v-if="isModalActive" @close="toggleModal" />
+        <ThePowerModal
+            v-if="isModalActive"
+            :dbs="{commands_db}"
+            :data="{commands}"
+            :icons="{commands_icon}"
+            :handlers="{commands_handler}"
+            @close="toggleModal"
+            @outside-clicked="toggleModal"
+        />
         <div class="fixed top-0 right-0 flex flex-col gap-4 p-4">
             <Card class="transition-all duration-500 ease-in hover:scale-125">
                 <div class="flex items-center justify-center w-4 h-4">
@@ -41,16 +49,35 @@ const tableData: CellData[][] = [
 
 // #region Modal Stuff
 
-// #region Data
-const db = await createLyraDB({
-    _id: 'string',
-    command: 'string'
-}, [
+// #region Command Data
+const commands = ref<Command[]>([
     {
-        _id: '1',
-        command: 'levelup'
-    }
+        _id: 0,
+        prefix: '/',
+        command: 'Level Up',
+        execute: levelup
+    },
+    {
+        _id: 1,
+        prefix: '/',
+        command: 'Lexi',
+        execute: levelup
+    },
 ])
+
+const commands_db = ref(
+await createLyraDB({
+        _id: 'number',
+        command: 'string'
+    }, commands.value)   
+)
+
+const commands_icon = 'mdi:slash-forward'
+
+const commands_handler = (command: Command) => {
+    console.log(`Handling ${command.command}...`)
+    command.execute()
+}
 // #endregion
 
 // #region Interactions
