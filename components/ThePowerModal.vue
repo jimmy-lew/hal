@@ -19,6 +19,9 @@
                     class="w-full bg-transparent focus:outline-0 placeholder:text-zinc-300"
                     type="text"
                     v-model="search"
+                    list="autocompleteOff"
+                    aria-autocomplete="none"
+                    autocomplete="off"
                     placeholder="Type a command or search..."
                 />
             </div>
@@ -45,6 +48,9 @@ const emits = defineEmits(['close'])
 
 const modal = ref<Nullable<HTMLElement>>(null)
 const search = ref('')
+const input = ref<Nullable<HTMLInputElement>>(null)
+
+useFocus(input, { initialValue: true })
 </script>
 
 <style scoped>
