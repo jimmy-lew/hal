@@ -18,9 +18,10 @@
 </template>
 
 <script setup lang="ts">
-const knight = new Knight()
-const archer = new Archer()
-const wizard = new Wizard()
+// #region Table Data
+const knight = Knight.getInstance()
+const archer = Archer.getInstance()
+const wizard = Wizard.getInstance()
 
 const headerData: CellData[] = [
     { data: 'Unit Type', type: 'header' },
@@ -36,7 +37,23 @@ const tableData: CellData[][] = [
     [{ data: 'Archer', type: 'header', icon: 'icon-park-outline:archers-bow' }, ...objectToCellData(archer, filterKeyData)],
     [{ data: 'Wizard', type: 'header', icon: 'mdi:magic-staff' }, ...objectToCellData(wizard, filterKeyData)],
 ]
+// #endregion
 
+// #region Modal Stuff
+
+// #region Data
+const db = await createLyraDB({
+    _id: 'string',
+    command: 'string'
+}, [
+    {
+        _id: '1',
+        command: 'levelup'
+    }
+])
+// #endregion
+
+// #region Interactions
 const dblShift = ref(false)
 const isModalActive = ref(false)
 
@@ -62,6 +79,9 @@ whenever(shift, () => {
     dblShift.value = true
     setTimeout(() => dblShift.value = false, 500)
 })
+// #endregion
+
+// #endregion
 </script>
 
 <style>
