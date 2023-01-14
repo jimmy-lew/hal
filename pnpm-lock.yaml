@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@lyrasearch/lyra': ^0.4.1
   '@nuxtjs/tailwindcss': ^6.2.0
   '@vueuse/core': ^9.10.0
   '@vueuse/nuxt': ^9.10.0
@@ -8,6 +9,7 @@ specifiers:
   nuxt-icon: ^0.2.3
 
 devDependencies:
+  '@lyrasearch/lyra': 0.4.1
   '@nuxtjs/tailwindcss': 6.2.0
   '@vueuse/core': 9.10.0
   '@vueuse/nuxt': 9.10.0_nuxt@3.0.0
@@ -430,6 +432,11 @@ packages:
       path-to-regexp: 6.2.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@lyrasearch/lyra/0.4.1:
+    resolution: {integrity: sha512-ZGy+fD01PB/hmM0xvcSg/C/NQFmen04fLRNtSYPRpYvQelC6jdnhYNIX46qpfSBdxN0I1D0DcR1fmkw7aDLHoA==}
+    engines: {node: '>= 16.0.0'}
     dev: true
 
   /@mapbox/node-pre-gyp/1.0.10:
