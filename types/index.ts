@@ -1,3 +1,5 @@
+import { PropertiesSchema } from "@lyrasearch/lyra/dist/types"
+
 export { }
 
 declare global {
@@ -10,5 +12,16 @@ declare global {
         type: 'data' | 'header'
         hint?: string
         icon?: string
+    }
+
+    interface Schema extends PropertiesSchema {
+        _id: 'number'
+    }
+
+    interface Command {
+        _id: number
+        command: string
+        prefix: string
+        execute: (...args: any[]) => any
     }
 }
