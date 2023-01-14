@@ -1,37 +1,31 @@
+import { Ref } from 'vue'
+
 export class Character {
-    level: number
-    health: number
+    level: Ref<number>
+    health: Ref<number>
     damage: number
     cooldown: number
     healing: number
     healingCooldown: number
-    dps: number
-    regen: number
-    movement: number
+    dps: Ref<number>
+    regen: Ref<number>
+    movement: Ref<number>
 
     constructor(level = 1, damage = 0, cooldown = 1, health = 100, movement = 50) {
-        this.level = level
+        this.level = ref(level)
         this.damage = damage
         this.cooldown = cooldown
-        this.health = health
-        this.movement = movement
+        this.health = ref(health)
+        this.movement = ref(movement)
         this.healing = 0.2
         this.healingCooldown = 2
 
-        this.dps = this.getDPS()
-        this.regen = this.getRegen()
-    }
-
-    getDPS() {
-        return this.damage / this.cooldown
-    }
-
-    getRegen() {
-        return (this.health * this.healing) / this.healingCooldown
+        this.dps = computed(() => this.damage / this.cooldown)
+        this.regen = computed(() => (this.health.value * this.healing) / this.healingCooldown)
     }
 
     levelUp(stat: keyof Character) {
-        this.level++
+        this.level.value++
 
         switch (stat) {
             case 'damage':
@@ -43,11 +37,11 @@ export class Character {
                 break;
             
             case 'health':
-                this.health *= 1.1
+                this.health.value *= 1.1
                 break;
 
             case 'movement':
-                this.movement *= 1.1
+                this.movement.value *= 1.1
                 break;
 
             case 'healing':
