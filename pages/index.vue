@@ -8,7 +8,6 @@
             :icons="{commands_icon}"
             :handlers="{commands_handler}"
             @close="toggleModal"
-            @outside-clicked="toggleModal"
         />
         <div class="fixed top-0 right-0 flex flex-col gap-4 p-4">
             <Card class="transition-all duration-500 ease-in hover:scale-125">
@@ -50,19 +49,11 @@ const tableData: CellData[][] = [
 // #region Modal Stuff
 
 // #region Command Data
-const commands = ref<Command[]>([
-    {
-        _id: 0,
-        prefix: '/',
-        command: 'Level Up',
-        execute: levelup
-    },
-    {
-        _id: 1,
-        prefix: '/',
-        command: 'Lexi',
-        execute: levelup
-    },
+const commands = ref<InstanceType<typeof Command>[]>([
+    LevelUpCommand.getInstance(),
+    LevelArcherCommand.getInstance(),
+    LevelKnightCommand.getInstance(),
+    LevelWizardCommand.getInstance(),
 ])
 
 const commands_db = ref(
@@ -74,9 +65,8 @@ await createLyraDB({
 
 const commands_icon = 'mdi:slash-forward'
 
-const commands_handler = (command: Command) => {
-    console.log(`Handling ${command.command}...`)
-    command.execute()
+const commands_handler = async (command: InstanceType<typeof Command>) => {
+    await command.execute()
 }
 // #endregion
 
