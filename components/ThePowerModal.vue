@@ -32,8 +32,8 @@
                     <CommandInput v-if="commandInputs.length > 0" v-for="{ key, value: { focus } } in commandInputs" :label="key" :has-focus="focus" @change="(change) => handleInputChange(key, change)"/>
                 </div>
             </div>
-            <div class="py-1">
-                <div class="results flex flex-col items-center pt-0 max-h-96 overflow-y-auto">
+            <div class="pt-2">
+                <div class="results flex flex-col items-center pt-0 max-h-96 overflow-y-auto border-b-[0.5px] border-white/20">
                     <SearchSection
                         v-if="Object.values(searchResults).some(dataHit => dataHit.length > 0)"
                         v-for="[key, value] in Object.entries(searchResults)"
@@ -51,6 +51,28 @@
                     <div v-else class="py-10 text-gray-400">
                         No Results...
                     </div>
+                </div>
+                <div class="flex items-center gap-1 p-2 text-xs">
+                    <Card class="transition-all duration-500 ease-in scale-75">
+                        <div class="flex items-center justify-center px-1 text-sm">
+                            Tab
+                        </div>
+                    </Card>
+                    &
+                    <div class="flex items-center">
+                        <Card class="transition-all duration-500 ease-in scale-75">
+                            <div class="flex items-center justify-center px-1 text-sm">
+                                Shift
+                            </div>
+                        </Card>
+                        +
+                        <Card class="transition-all duration-500 ease-in scale-75">
+                            <div class="flex items-center justify-center px-1 text-sm">
+                                Tab
+                            </div>
+                        </Card>
+                    </div>
+                    for navigation
                 </div>
             </div>
         </div>
@@ -151,16 +173,16 @@ const emits = defineEmits(['close'])
 const modal = ref<Nullable<HTMLElement>>(null)
 const input = ref<Nullable<HTMLInputElement>>(null)
 
-const { enter, slash } = useMagicKeys({
+const { enter, slash, down, up } = useMagicKeys({
     passive: false,
     onEventFired(e) {
-        const isEnter = e.key == 'Enter'
-        const isSlash = e.key == '.'
-        if ((isEnter|| isSlash) && e.type === 'keydown') e.preventDefault()
+        const { type } = e
+        const [ isEnter, isDown, isUp, isSlash ] = [ 'Enter', 'ArrowDown', 'ArrowUp', '/' ].map(key => key === e.key)
+        if ((isEnter|| isSlash || isDown || isUp) && type === 'keydown') e.preventDefault()
     }
 })
 
-const { focused } = useFocus(input, { initialValue: true })
+useFocus(input, { initialValue: true })
 onClickOutside(modal, () => emits('close'))
 
 whenever(enter, async () => {

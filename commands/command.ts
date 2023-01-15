@@ -1,5 +1,3 @@
-import { Ref } from 'vue'
-
 export class Command implements ISearchable {
     static id = 0
     _id: number
