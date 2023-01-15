@@ -13,7 +13,7 @@ export class LevelArcherCommand extends Command {
     }
 
     private constructor() {
-        super('Archer')
+        super('Archer', 'levelArcher')
         this.inputOptions = {
             stats: { focus: true, data: '', required: false },
         }

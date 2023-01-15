@@ -59,7 +59,8 @@ const commands = ref<InstanceType<typeof Command>[]>([
 const commands_db = ref(
 await createLyraDB({
         _id: 'number',
-        command: 'string'
+        command: 'string',
+        alias: 'string'
     }, commands.value)   
 )
 

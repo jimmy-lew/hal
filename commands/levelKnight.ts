@@ -13,7 +13,7 @@ export class LevelKnightCommand extends Command {
     }
 
     private constructor() {
-        super('Knight')
+        super('Knight', 'levelKnight')
         this.inputOptions = {
             stats: { focus: true, data: '', required: false },
         }

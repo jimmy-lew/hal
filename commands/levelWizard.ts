@@ -13,7 +13,7 @@ export class LevelWizardCommand extends Command {
     }
 
     private constructor() {
-        super('Wizard')
+        super('Wizard', 'levelWizard')
         this.inputOptions = {
             stats: { focus: true, data: '', required: false },
         }

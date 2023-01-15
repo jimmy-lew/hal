@@ -14,7 +14,7 @@ export class LevelUpCommand extends Command {
     }
 
     private constructor() {
-        super('Level Up')
+        super('Level Up', 'lvl')
         this.inputOptions = {
             entity: { focus: true, data: '', required: true },
             stats: { focus: false, data: '', required: false },
