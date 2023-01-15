@@ -18,10 +18,11 @@ declare global {
         _id: 'number'
     }
 
-    interface Command {
-        _id: number
-        command: string
-        prefix: string
-        execute: (...args: any[]) => any
+    interface ISearchable {
+        searchOptions: {
+            type: 'command' | 'redirect'
+        }
     }
+
+    interface InputOption<T> { focus: boolean, data: T, required?: boolean }
 }
