@@ -41,7 +41,8 @@
                     >
                         <SearchItem
                             v-if="key.length > 0"
-                            v-for="data in value"
+                            v-for="(data, index) in value"
+                            :id="`si-${index}`"
                             :data="data"
                             :data-icon="icons[`${key}_icon`]"
                             :data-key="key.slice(0, key.length - 1)"
@@ -112,6 +113,11 @@ const selectNearest = () => {
     if (value) handleClick(key, value)
 }
 
+const selectByIndex = (index: number) => {
+    const [[key], [value]] = [Object.keys(searchResults.value), Object.values(searchResults.value)]
+    if (value) handleClick(key, value[index])
+}
+
 const handleInput = (e: KeyboardEvent) => {
     const { target, key } = e
     if (!(target instanceof HTMLDivElement)) return 
@@ -173,12 +179,12 @@ const emits = defineEmits(['close'])
 const modal = ref<Nullable<HTMLElement>>(null)
 const input = ref<Nullable<HTMLInputElement>>(null)
 
-const { enter, slash, down, up } = useMagicKeys({
+const { enter } = useMagicKeys({
     passive: false,
     onEventFired(e) {
         const { type } = e
-        const [ isEnter, isDown, isUp, isSlash ] = [ 'Enter', 'ArrowDown', 'ArrowUp', '/' ].map(key => key === e.key)
-        if ((isEnter|| isSlash || isDown || isUp) && type === 'keydown') e.preventDefault()
+        const [ isEnter ] = [ 'Enter' ].map(key => key === e.key)
+        if ((isEnter) && type === 'keydown') e.preventDefault()
     }
 })
 
@@ -186,8 +192,10 @@ useFocus(input, { initialValue: true })
 onClickOutside(modal, () => emits('close'))
 
 whenever(enter, async () => {
-    if(commandInputs.value.length == 0) return selectNearest()
+    if (useActiveElement().value && currentCommand.value == null) return selectByIndex(Number(useActiveElement().value?.id.split('-')[1]))
+    if (commandInputs.value.length == 0) return selectNearest()
     await handlers.value.commands_handler(currentCommand.value)
+    currentCommand.value = null
     emits('close')
 })
 // #endregion
