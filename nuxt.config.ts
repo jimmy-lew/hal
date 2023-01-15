@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     ],
     imports: {
         dirs: [
-            'entity'
+            'entity',
+            'commands'
         ]
     }
 })
