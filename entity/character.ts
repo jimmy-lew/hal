@@ -20,18 +20,23 @@ export class Character {
         this.healing = 0.2
         this.healingCooldown = 2
 
-        this.dps = computed(() => this.damage / this.cooldown)
-        this.regen = computed(() => (this.health.value * this.healing) / this.healingCooldown)
+        this.dps = ref(this.damage / this.cooldown)
+        this.regen = ref((this.health.value * this.healing) / this.healingCooldown)
     }
 
-    levelUp(stat: keyof Character) {
+    recomputeStats() {
+        this.dps.value = this.damage / this.cooldown
+        this.regen.value = (this.health.value * this.healing) / this.healingCooldown
+    }
+
+    levelUp(stat: keyof Character = 'damage') {
         this.level.value++
 
         switch (stat) {
             case 'damage':
                 this.damage *= 1.1
                 break;
-
+                
             case 'cooldown':
                 this.cooldown *= 0.9
                 break;
@@ -55,5 +60,7 @@ export class Character {
             default:
                 break;
         }
+
+        this.recomputeStats()
     }
 }
