@@ -1,13 +1,23 @@
 <template>
-	<div class="card glow">
-		<div>
+	<div class="card glow" :class="`rounded-${round}`">
+		<div :class="`p-${padding}`">
 			<slot />
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
+const props = withDefaults(defineProps<{
+    radius?: number
+    padding?: number
+    round?: RoundTypes
+}>(), {
+    radius: 6,
+    padding: 2,
+    round: 'lg'
+})
 
+const glowRadius = computed(() => `${props.radius}rem`)
 </script>
 
 <style scoped>
@@ -15,16 +25,14 @@
     @apply
     relative
     flex flex-col justify-center items-center
-    rounded-lg
     bg-[#18181b];
-    --radius: 6rem;
+    --radius: v-bind(glowRadius);
 }
 
 .card > div {
     @apply
     flex flex-col justify-center items-center
     m-px
-    p-2
     text-xs
     bg-[#0c0c0c];
     border-radius: inherit;

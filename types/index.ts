@@ -5,6 +5,10 @@ export { }
 declare global {
     type Nullable<T> = T | null
 
+    type SizeTypes = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
+    type RoundTypes = SizeTypes
+    
+
     type ColumnData = (string | number)[]
 
     interface CellData {
