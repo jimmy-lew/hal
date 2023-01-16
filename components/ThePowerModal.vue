@@ -98,26 +98,7 @@ const {
     handlers
 } = toRefs(props)
 
-// #region Search
-const search = ref('')
-const searchResults = ref<Record<string, any[]>>(
-    Object.fromEntries(
-        Object.keys(dbs.value)
-            .map(key => key.split('_')[0])
-            .map(key => [key, []])
-    )
-)
-
-const selectNearest = () => {
-    const [[key], [[value]]] = [Object.keys(searchResults.value), Object.values(searchResults.value)]
-    if (value) handleClick(key, value)
-}
-
-const selectByIndex = (index: number) => {
-    const [[key], [value]] = [Object.keys(searchResults.value), Object.values(searchResults.value)]
-    if (value) handleClick(key, value[index])
-}
-
+// #region Handlers
 const handleInput = (e: KeyboardEvent) => {
     const { target, key } = e
     if (!(target instanceof HTMLDivElement)) return 
@@ -126,32 +107,6 @@ const handleInput = (e: KeyboardEvent) => {
     e.preventDefault()
     selectNearest()
 }
-
-watch(search, (searchTerm) => {
-    Object.entries(dbs.value).forEach(async ([dirtyKey, db]) => {
-
-        const [key] = dirtyKey.split('_')
-        
-        const isCommand = searchTerm[0] === '/'
-
-        const res = await lyraSearch(db, {
-            term: searchTerm,
-            properties: isCommand ? ['prefix', 'command'] : '*',
-        })
-        
-        const dataHits = res.hits.map(({document}) => {
-            const { _id } = document
-            return data.value[key][_id]
-        })
-
-        searchResults.value[key] = dataHits.length && !dataHits.some(data => !data) ? [...dataHits] : []
-    })
-})
-// #endregion    
-
-// #region Selection & Commands
-const commandInputs = ref<any[]>([])
-const currentCommand = ref<Nullable<InstanceType<typeof Command>>>(null)
 
 const handleClick = async (dataKey: string, data: any) => {
     const { searchOptions: { type } } = data
@@ -174,10 +129,59 @@ const handleInputChange = (key: string, value: string) => {
 }
 // #endregion
 
+// TODO: Decouple to independant component
+// #region Search
+const search = ref('')
+const searchResults = ref<Record<string, any[]>>(
+    Object.fromEntries(
+        Object.keys(dbs.value)
+            .map(key => key.split('_')[0])
+            .map(key => [key, []])
+    )
+)
+
+watch(search, (searchTerm) => {
+    Object.entries(dbs.value).forEach(async ([dirtyKey, db]) => {
+
+        const [key] = dirtyKey.split('_')
+
+        const res = await lyraSearch(db, {
+            term: searchTerm,
+            properties: '*',
+        })
+        
+        const dataHits = res.hits.map(({document}) => {
+            const { _id } = document
+            return data.value[key][_id]
+        })
+
+        searchResults.value[key] = (dataHits.length && !dataHits.some(data => !data)) ? [...dataHits] : []
+    })
+})
+// #endregion    
+
+// #region Selection & Commands
+const commandInputs = ref<any[]>([])
+const currentCommand = ref<Nullable<InstanceType<typeof Command>>>(null)
+
+const selectNearest = () => {
+    const [[key], [[value]]] = [Object.keys(searchResults.value), Object.values(searchResults.value)]
+    if (value) handleClick(key, value)
+}
+
+const selectByIndex = (index: number) => {
+    const [[key], [value]] = [Object.keys(searchResults.value), Object.values(searchResults.value)]
+    if (value) handleClick(key, value[index])
+}
+// #endregion
+
 // #region Interactions
 const emits = defineEmits(['close'])
 const modal = ref<Nullable<HTMLElement>>(null)
 const input = ref<Nullable<HTMLInputElement>>(null)
+
+useFocus(input, { initialValue: true })
+onClickOutside(modal, () => emits('close'))
 
 const { enter } = useMagicKeys({
     passive: false,
@@ -187,9 +191,6 @@ const { enter } = useMagicKeys({
         if ((isEnter) && type === 'keydown') e.preventDefault()
     }
 })
-
-useFocus(input, { initialValue: true })
-onClickOutside(modal, () => emits('close'))
 
 whenever(enter, async () => {
     if (useActiveElement().value && currentCommand.value == null) return selectByIndex(Number(useActiveElement().value?.id.split('-')[1]))
