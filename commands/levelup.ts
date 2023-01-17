@@ -25,14 +25,13 @@ export class LevelUpCommand extends Command {
         const { entity: { data: entityData }, stats: { data: statsData } } = this.inputOptions
         const characterRepoInstance = await CharacterRepository.getInstance()
         const { data, error } = await characterRepoInstance.searchForChar(entityData)
-        if (error || !data) return console.log(`No character found for ${entityData} | Error: ${error} | Data: ${data}`)
+        if (error || !data) return
         const { alias } = data
         const statArray = await parseStatString(statsData)
         statArray.forEach(stat => this.levelUp(alias, stat as keyof InstanceType<typeof Character>))
     }
 
     levelUp(entity: string, stat = 'damage' as keyof InstanceType<typeof Character>) {
-        console.log(`Leveling up ${entity}...`)
         switch (entity) {
             case 'archer':
                 Archer.getInstance().levelUp(stat)
