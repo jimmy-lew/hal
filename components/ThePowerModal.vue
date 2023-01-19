@@ -1,84 +1,62 @@
 <template>
-<div
-    class="
-    fixed inset-0
-    w-screen h-screen
-    pt-[20%]
-    px-4
-    bg-black/70
-    z-[2000]
-    backdrop-blur-sm
-    flex justify-center"
->
-    <div class="relative w-full max-w-2xl">
+<Modal @close="() => emits('close')">
+    <div class="flex items-center rounded-t py-4 px-6 border-b-[0.5px] border-white/20">
+        <Icon name="line-md:search" class="text-white -scale-x-100 mr-2"/>
         <div
-            ref="modal"
-            class="
-            relative
-            flex flex-col
-            rounded-lg shadow-lg
-            backdrop-blur-sm bg-transparent
-            border-[0.5px] border-white/20"
+            ref="input"
+            class="relative w-[calc(100%-24px)] bg-transparent focus:outline-0 flex flex-wrap gap-2"
+            contenteditable="true"
+            placeholder="Type a command or search..."
+            @keydown="handleInput"
         >
-            <div class="flex items-center rounded-t py-4 px-6 border-b-[0.5px] border-white/20">
-                <Icon name="line-md:search" class="text-white -scale-x-100 mr-2"/>
-                <div
-                    ref="input"
-                    class="relative w-[calc(100%-24px)] bg-transparent focus:outline-0 flex flex-wrap gap-2"
-                    contenteditable="true"
-                    placeholder="Type a command or search..."
-                    @keydown="handleInput"
-                >
-                    <CommandInput v-if="commandInputs.length > 0" v-for="{ key, value: { focus } } in commandInputs" :label="key" :has-focus="focus" @change="(change) => handleInputChange(key, change)"/>
-                </div>
-            </div>
-            <div class="pt-2">
-                <div class="results flex flex-col items-center pt-0 max-h-96 overflow-y-auto border-b-[0.5px] border-white/20">
-                    <SearchSection
-                        v-if="Object.values(searchResults).some(dataHit => dataHit.length > 0)"
-                        v-for="[key, value] in Object.entries(searchResults)"
-                        :title="key"
-                    >
-                        <SearchItem
-                            v-if="key.length > 0"
-                            v-for="(data, index) in value"
-                            :id="`si-${index}`"
-                            :data="data"
-                            :data-icon="icons[`${key}_icon`]"
-                            :data-key="key.slice(0, key.length - 1)"
-                            @click="handleClick(key, data)"
-                        />
-                    </SearchSection>
-                    <div v-else class="py-10 text-gray-400">
-                        No Results...
-                    </div>
-                </div>
-                <div class="flex items-center gap-1 p-2 text-xs">
-                    <Card class="transition-all duration-500 ease-in scale-75">
-                        <div class="flex items-center justify-center px-1 text-sm">
-                            Tab
-                        </div>
-                    </Card>
-                    &
-                    <div class="flex items-center">
-                        <Card class="transition-all duration-500 ease-in scale-75">
-                            <div class="flex items-center justify-center px-1 text-sm">
-                                Shift
-                            </div>
-                        </Card>
-                        +
-                        <Card class="transition-all duration-500 ease-in scale-75">
-                            <div class="flex items-center justify-center px-1 text-sm">
-                                Tab
-                            </div>
-                        </Card>
-                    </div>
-                    for navigation
-                </div>
-            </div>
+            <CommandInput v-if="commandInputs.length > 0" v-for="{ key, value: { focus } } in commandInputs" :label="key" :has-focus="focus" @change="(change) => handleInputChange(key, change)"/>
         </div>
     </div>
-</div>
+    <div class="pt-2">
+        <div class="results flex flex-col items-center pt-0 max-h-96 overflow-y-auto border-b-[0.5px] border-white/20">
+            <SearchSection
+                v-if="Object.values(searchResults).some(dataHit => dataHit.length > 0)"
+                v-for="[key, value] in Object.entries(searchResults)"
+                :title="key"
+            >
+                <SearchItem
+                    v-if="key.length > 0"
+                    v-for="(data, index) in value"
+                    :id="`si-${index}`"
+                    :data="data"
+                    :data-icon="icons[`${key}_icon`]"
+                    :data-key="key.slice(0, key.length - 1)"
+                    @click="handleClick(key, data)"
+                />
+            </SearchSection>
+            <div v-else class="py-10 text-gray-400">
+                No Results...
+            </div>
+        </div>
+        <div class="flex items-center gap-1 p-2 text-xs">
+            <Card class="transition-all duration-500 ease-in scale-75">
+                <div class="flex items-center justify-center px-1 text-sm">
+                    Tab
+                </div>
+            </Card>
+            &
+            <div class="flex items-center">
+                <Card class="transition-all duration-500 ease-in scale-75">
+                    <div class="flex items-center justify-center px-1 text-sm">
+                        Shift
+                    </div>
+                </Card>
+                +
+                <Card class="transition-all duration-500 ease-in scale-75">
+                    <div class="flex items-center justify-center px-1 text-sm">
+                        Tab
+                    </div>
+                </Card>
+            </div>
+            for navigation
+        </div>
+    </div>
+</Modal>
 </template>
 
 <script setup lang="ts">
@@ -177,11 +155,9 @@ const selectByIndex = (index: number) => {
 
 // #region Interactions
 const emits = defineEmits(['close'])
-const modal = ref<Nullable<HTMLElement>>(null)
 const input = ref<Nullable<HTMLInputElement>>(null)
 
 useFocus(input, { initialValue: true })
-onClickOutside(modal, () => emits('close'))
 
 const { enter } = useMagicKeys({
     passive: false,
