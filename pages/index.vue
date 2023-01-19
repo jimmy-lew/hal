@@ -68,6 +68,7 @@ const commands_icon = 'mdi:slash-forward'
 
 const commands_handler = async (command: InstanceType<typeof Command>) => {
     await command.execute()
+    toggleModal()
 }
 // #endregion
 
@@ -82,9 +83,9 @@ const toggleModal = () => {
 const { shift, escape } = useMagicKeys({
     passive: false,
     onEventFired(e) {
-        const isShift = e.key == 'shift'
-        const isEscape = e.key == 'escape'
-        if ((isShift|| isEscape) && e.type === 'keydown') e.preventDefault()
+        const { type, key } = e
+        const isWatchedKey = [ 'shift', 'escape' ].map(_key => _key === key).some(_key => Boolean(_key))
+        if (isWatchedKey && type === 'keydown') e.preventDefault()
     }
 })
 
@@ -92,6 +93,7 @@ whenever(escape, () => {
     if (!isModalActive.value) return
     isModalActive.value = false
 })
+
 whenever(shift, () => {
     if (dblShift.value) return toggleModal()
     dblShift.value = true

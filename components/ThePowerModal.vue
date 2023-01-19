@@ -70,10 +70,7 @@ const handleClick = async (dataKey: string, data: any) => {
     const isCommand = type === 'command'
     const requiresInput = !!inputOptions
     if (isCommand) currentCommand.value = data
-    if (!requiresInput) {
-        await handlers[`${dataKey}_handler`](data)
-        return emits('close')
-    }
+    if (!requiresInput) return await handlers[`${dataKey}_handler`](data)
 
     Object.entries(inputOptions).forEach(([key, value]) => {
         commandInputs.value.push({ key, value })
@@ -122,7 +119,6 @@ whenever(enter, async () => {
     if (commandInputs.value.length == 0) return selectNearest()
     await handlers.commands_handler(currentCommand.value)
     currentCommand.value = null
-    emits('close')
 })
 // #endregion
 </script>
